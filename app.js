@@ -1,51 +1,74 @@
 const express = require('express')
-const hbs = require('hbs')
+const app = express()
 
-const app = express();
-app.set('view engine','hbs');
-hbs.registerPartials(__dirname +'/views/partials')
-app.use(express.static(__dirname + '/pubic'));
+const {ObjectId,MongoClient} = require('mongodb');
+const url = 'mongodb://localhost:27017';
 
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb+srv://huyduc:123@cluster0.82mff.mongodb.net/test';
-app.get('/',async (req,res)=>{
-    let client= await MongoClient.connect(url);  
-    let dbo = client.db("asm2");  
-    let results = await dbo.collection("products").find({}).toArray();
-    res.render('index',{model:results})
-})
-app.get('/insert',(req,res)=>{
-    res.render('addProduct');
-})
 
-var bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));
+app.set('view engine', 'hbs')
+app.use(express.urlencoded({ extended: true }))
 
-app.post('/doInsert',async (req,res)=>{
-    let nameInput = req.body.txtName;
-    let priceInput = req.body.txtPrice;
-    let colorInput = req.body.txtColor;
-    let quantityInput = req.body.txtQuantity;
-    
-    let client= await MongoClient.connect(url);  
-    let dbo = client.db("asm2"); 
-    let newProduct = {nameProduct : nameInput, price:priceInput, color:colorInput,quantity:quantityInput};
+app.use(express.static('public'))
+
+
+app.post('/insert', async(req,res) => {
+    const inputName = req.body.txtName;
+    const inputPrice = req.body.txtPrice;
+    const inputPicture = req.body.txtPricture;
+
+    const newProduct = {name: inputName, price: inputPrice, picture: inputPicture}
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
     await dbo.collection("products").insertOne(newProduct);
-   
-    res.redirect('/');
+    res.redirect("/");
 })
 
-app.get('/delete', async (req,res)=>{
-    let id = req.query.id;
-    var ObjectID = require('mongodb').ObjectID;
-    let condition = {"_id" : ObjectID(id)};
-
-    let client= await MongoClient.connect(url);
-    let dbo = client.db("asm2");
-    await dbo.collection('products').deleteOne(condition)
-    res.redirect('/');
+app.post('/update', async(req,res) => {
+    const inputName = req.body.txtName;
+    const inputPrice = req.body.txtPrice;
+    const id = req.body.txtId;
+    const inputPicture = req.body.txtPicture;
+    const filter = {_id: ObjectId(id)}
+    
+    const newValue = { $set: { name: inputName, price: inputPrice, picture: inputPicture} };
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
+    await dbo.collection("products").updateOne(filter, newValue)
+    res.redirect("/");
 })
 
-var PORT = process.env.PORT || 3000
+app.get('/delete',async(req,res)=>{
+    const id = req.query.id;
+
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
+    await dbo.collection("products").deleteOne({"_id":ObjectId(id)});
+    res.redirect("/");
+})
+
+app.get('/edit', async(req,res) => {
+    const id = req.query.id;
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
+    const p = await dbo.collection("products").findOne({"_id":ObjectId(id)});
+    res.render("edit", { product: p });
+})
+
+app.post('/search', async(req,res) =>{
+    const inputSearch = req.body.txtSearch;
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
+    const allProduct = await dbo.collection("products").find({name: inputSearch}).toArray();
+    res.render('index',{data: allProduct})
+})
+
+app.get('/', async(req,res) => {
+    const client = await MongoClient.connect(url);
+    const dbo = client.db("asm2");
+    const allProduct = await dbo.collection("products").find({}).toArray();
+    res.render('index',{data: allProduct});
+})
+
+const PORT = process.env.PORT || 4000;
 app.listen(PORT)
-console.log("Server is running!")
+console.log("app is running", PORT)

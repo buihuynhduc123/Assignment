@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+<body>
+    <h2>Edit product</h2>
+    <form action="/update" method="post">
+    Picture
+    <input type="text" name="txtPicture" value="{{products.picture}}">
+    <br>
+    Name
+    <input type="text" name="txtName" value="{{products.name}}">
+    <br>
+    Price
+    <input type="text" name="txtPrice" value="{{products.price}}">
+    <input type="hidden" name="txtId" value="{{products._id}}">
+    <br>
+    <input type="submit" value="Update">
+</body>
+</html>
