@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 
 const {ObjectId,MongoClient} = require('mongodb');
-const url = 'mongodb://localhost:27017';
+const url = 'mongodb+srv://huyduc:123@cluster0.82mff.mongodb.net/test';
 
 
 app.set('view engine', 'hbs')
