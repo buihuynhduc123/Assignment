@@ -22,3 +22,9 @@ table {
   body {
     font-family: Arial, Helvetica, sans-serif;
   }
+  header{
+    background-color:#73ad21;
+    color:white;
+    text-align:center;
+    padding-bottom:30px;
+  }
