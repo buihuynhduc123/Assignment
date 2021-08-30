@@ -16,7 +16,6 @@ app.post('/insert', async(req,res) => {
     const inputName = req.body.txtName;
     const inputPrice = req.body.txtPrice;
     const inputPicture = req.body.txtPricture;
-
     const newProduct = {name: inputName, price: inputPrice, picture: inputPicture}
     const client = await MongoClient.connect(url);
     const dbo = client.db("asm2");
