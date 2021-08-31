@@ -4,7 +4,7 @@ table {
     width: 100%;
   }
   td, th{
-      color: forestgreen;
+      
       text-align: center;
       padding: 10px;
   }
@@ -26,5 +26,5 @@ table {
     background-color:#73ad21;
     color:white;
     text-align:center;
-    padding-bottom:30px;
+    padding-bottom:25px;
   }
