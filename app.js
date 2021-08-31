@@ -17,10 +17,24 @@ app.post('/insert', async(req,res) => {
     const inputPrice = req.body.txtPrice;
     const inputPicture = req.body.txtPricture;
     const newProduct = {name: inputName, price: inputPrice, picture: inputPicture}
+
+    const linkImg = req.body.link;
+    isEr= false;
+    error={};
+    if(inputPrice<10){
+        error.name="sai";
+        isEr=true;
+    }
+    if(isEr){
+        res.render('index',{err:error})
+    }
+    else{
     const client = await MongoClient.connect(url);
     const dbo = client.db("asm2");
     await dbo.collection("products").insertOne(newProduct);
     res.redirect("/");
+        
+    }
 })
 
 app.post('/update',async(req,res) => {
